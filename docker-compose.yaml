@@ -1,0 +1,38 @@
+version: "3.7"
+services:
+  mysql-server:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    networks:
+      - spring-boot-mysql-network-backend
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=bankmgmt
+      - MYSQL_USERNAME=raouene
+      - MYSQL_PASSWORD=raouene
+  spring-boot-mysql:
+    image: raouenembarek/bank-management-backend:0.1
+    ports:
+      - "9090:9090"
+    networks:
+      - spring-boot-mysql-network-backend
+      - spring-boot-mysql-network-frontend
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-server:3306/bankmgmt?useSSL=false&allowPublicKeyRetrieval=true
+    depends_on:
+      - mysql-server
+  angular-app:
+    image: raouenembarek/bank-management-frontend:0.1
+    ports:
+      - "4200:80"
+    networks:
+      - spring-boot-mysql-network-frontend
+    environment:
+      - apiUrl=http://spring-boot-mysql
+    depends_on:
+      - spring-boot-mysql
+networks:
+  spring-boot-mysql-network-backend:
+  spring-boot-mysql-network-frontend:
