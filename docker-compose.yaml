@@ -12,6 +12,11 @@ services:
       - MYSQL_DATABASE=bankmgmt
       - MYSQL_USERNAME=raouene
       - MYSQL_PASSWORD=raouene
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 10s
+      retries: 3
   spring-boot-mysql:
     image: raouenembarek/bank-management-backend:0.1
     ports:
@@ -22,7 +27,8 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-server:3306/bankmgmt?useSSL=false&allowPublicKeyRetrieval=true
     depends_on:
-      - mysql-server
+      mysql-server:
+        condition: service_healthy
   angular-app:
     image: raouenembarek/bank-management-frontend:0.1
     ports:
