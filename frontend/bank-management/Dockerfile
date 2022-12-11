@@ -9,5 +9,7 @@ RUN npm run build --prod
 
 ### STAGE 2: Run ###
 FROM nginx:1.17.1-alpine
+EXPOSE 80
 COPY ./nginx.config /etc/nginx/conf.d/default.conf
 COPY /dist/icin-bank /usr/share/nginx/html
+CMD ["nginx", "-g", "daemon off;"]

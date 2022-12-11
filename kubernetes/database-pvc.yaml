@@ -5,12 +5,9 @@ metadata:
   labels:
     app: database
 spec:
-  storageClassName: standard
+  storageClassName: default
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
       storage: 1Gi
-  selector:
-    matchLabels:
-      app: database
