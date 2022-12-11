@@ -5,3 +5,10 @@ ACCOUNT_LOGIN_USER_ID varchar(255) not null,
 ACCOUNT_LOGIN_PASSWORD varchar(11) not null,
 ACCOUNT_IS_BLOCKED decimal(1) not null
 );
+INSERT INTO Users VALUES(
+    'ICIN0001',
+    'Foulen BEN FOULEN',
+    'foulenbenfoulen',
+    'foulen',
+    0
+)

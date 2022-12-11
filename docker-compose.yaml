@@ -30,7 +30,7 @@ services:
       mysql-server:
         condition: service_healthy
   angular-app:
-    image: raouenembarek/bank-management-frontend:0.1
+    image: raouenembarek/bank-management-frontend:dev
     ports:
       - "4200:80"
     networks:
