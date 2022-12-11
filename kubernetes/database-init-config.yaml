@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-initdb-config
+  labels:
+    app: database
+data:
+  init.sql: |
+    CREATE DATABASE IF NOT EXISTS bankmgmt;
+    -- Accounts table
+    create table Accounts (
+    ACCOUNT_NUMBER varchar(16) primary key,
+    ACCOUNT_HOLDER_NAME varchar(255) not null,
+    ACCOUNT_CIF_NUMBER varchar(11) not null unique,
+    ACCOUNT_BRANCH varchar(255) not null,
+    ACCOUNT_BALANCE_PRIMARY  decimal(10,2) not null,
+    ACCOUNT_BALANCE_SAVINGS  decimal(10,2) not null,
+    ACCOUNT_IS_NET_BANKING_REG int(1) not null
+    );
+    insert into Accounts values ('123456789', 'Foulen BEN FOULEN', 'ICIN002', 'TUNIS', 1762.88, 4000.00, 0);
+    insert into Accounts values ('123321456', 'Foulen EL FOULENI', 'ICIN003', 'ARIANA', 17888.00, 10000.98, 0);
+    insert into Accounts values ('123456765', 'Foulena FOULENIYA', 'ICIN004', 'BIZERTE', 6000.05, 2000.88, 0);
+    select * from Accounts;
+    drop table Accounts;
+    -- Cheque table
+    create table Cheque (
+    CHEQUE_BOOK_NUMBER varchar(20) primary key,
+    ACCOUNT_NUMBER varchar(16) not null,
+    ACCOUNT_TYPE varchar(255) not null,
+    CHEQUE_BOOK_ISSUE_DATE date not null,
+    CHEQUE_BOOK_STATUS decimal(1) not null
+    );
+    -- Transaction table
+    create table Transactions (
+    ID int primary key,
+    FROM_ACCOUNT_NUMBER varchar(16) not null,
+    TO_ACCOUNT_NUMBER varchar(16) not null,
+    FROM_ACCOUNT_HOLDER_NAME varchar(16) not null,
+    TO_ACCOUNT_HOLDER_NAME varchar(16) not null,
+    FROM_ACCOUNT_TYPE varchar(255) not null,
+    TO_ACCOUNT_TYPE varchar(255) not null,
+    TRANSFER_AMOUNT decimal(10,2) not null,
+    TRANSFER_MESSAGE varchar(255) not null,
+    TRANSFER_DATE date not null,
+    TRANSFER_STATUS decimal(1) not null
+    );
+    -- Users table
+    create table Users (
+    ACCOUNT_NUMBER varchar(16) primary key,
+    ACCOUNT_HOLDER_NAME varchar(255) not null,
+    ACCOUNT_LOGIN_USER_ID varchar(255) not null,
+    ACCOUNT_LOGIN_PASSWORD varchar(11) not null,
+    ACCOUNT_IS_BLOCKED decimal(1) not null
+    );

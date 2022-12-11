@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-bank-management
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend-bank-management
+        image: raouenembarek/bank-management-backend:0.1
+        imagePullPolicy: IfNotPresent
+        args:
+        - "-Dspring.config.location=/config/application.properties"
+        env:
+        - name: MYSQL_HOST
+          valueFrom:
+            secretKeyRef:
+              name: backend-secret
+              key: MYSQL_HOST
+        - name: MYSQL_DB
+          valueFrom:
+            secretKeyRef:
+              name: backend-secret
+              key: MYSQL_DB
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: backend-secret
+              key: MYSQL_ROOT_PASSWORD
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "300m"
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+        ports:
+        - containerPort: 9090
+          name: http
+        volumeMounts:
+        - name: app-config-volume
+          mountPath: /config/application.properties
+          subPath: application.properties
+      volumes:
+      - name: app-config-volume
+        configMap:
+          name: backend-config
+          items:
+          - key: application.properties
+            path: application.properties

@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-db
+  labels:
+    app: database
+spec:
+  replicas: 1
+  serviceName: mysql-db-svc
+  selector:
+    matchLabels:
+      app: database
+  template:
+    metadata:
+      labels:
+        app: database
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: mysql-db
+        image: mysql:5.7
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - "mysqladmin -uroot -p$MYSQL_ROOT_PASSWORD ping"
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          exec:
+            command:
+            - sh
+            - -c
+            - 'mysql -uroot -p$MYSQL_ROOT_PASSWORD -e "SELECT 1"'
+          initialDelaySeconds: 10
+          periodSeconds: 2
+          timeoutSeconds: 1
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "200m"
+            memory: "512Mi"
+        args:
+        - "--ignore-db-dir=lost+found"
+        ports:
+        - name: tcp
+          protocol: TCP
+          containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-db-secret
+              key: MYSQL_ROOT_PASSWORD
+        - name: MYSQL_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: mysql-db-secret
+              key: MYSQL_DB
+        volumeMounts:
+        - name: mysql-db-data
+          mountPath: /var/lib/mysql
+        - name: mysql-initdb
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:
+      - name: mysql-initdb
+        configMap:
+          name: mysql-initdb-config
+      - name: mysql-db-data
+        persistentVolumeClaim:
+          claimName: mysql-db-data
