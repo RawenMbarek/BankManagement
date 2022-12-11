@@ -14,7 +14,7 @@ spec:
       containers:
       - name: frontend-bank-management
         image: raouenembarek/bank-management-frontend:0.1
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         resources:
           limits:
             memory: "128Mi"
